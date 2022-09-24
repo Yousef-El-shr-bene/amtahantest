@@ -1,16 +1,28 @@
-export const Book = ({title,authors,imageLinks,id}) => {
+import { useEffect, useState } from "react"
+import {Select} from "./Select"
+import {get} from './BooksAPI'
+export const Book = ({title,authors,imageLinks,id,setupdate}) => {
+const [bosition,setbosition] = useState("none")
+  useEffect(() => {
+    let trash = setTimeout(() => {
+      console.log(id);
+      get(id).then( (next)=>{
+        setbosition(next.shelf)
+      })
 
-  // let title = title || ""
-  // let authors = authors || ""
-  // let id = id || ""
-  // let key = id || 0
+    }, 0);
 
+    return ()=>{
+      clearTimeout(trash)
+    }
+  }, [bosition])
     return (<>
-    <li>
+                    <li>
                       <div className="book">
                         <div className="book-top">
                           <div
                             className="book-cover"
+                            id={id}
                             style={{
                               width: 128,
                               height: 193,
@@ -19,21 +31,11 @@ export const Book = ({title,authors,imageLinks,id}) => {
                             }}
                           ></div>
                           <div className="book-shelf-changer">
-                            <select>
-                              <option value="none" disabled>
-                                Move to...
-                              </option>
-                              <option value="currentlyReading">
-                                Currently Reading
-                              </option>
-                              <option value="wantToRead">Want to Read</option>
-                              <option value="read">Read</option>
-                              <option value="none">None</option>
-                            </select>
+                          <Select bosition={bosition} id={id} setupdate={setupdate} />
                           </div>
                         </div>
                         <div className="book-title">{title}</div>
-                        <div className="book-authors">{authors}</div>
+                        <div className="book-authors">{authors.toString()}</div>
                       </div>
                     </li>
     </>)
